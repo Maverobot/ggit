@@ -23,7 +23,7 @@ branches:
     - /^(?i:continuous)$/
 
 deploy:
-  provider: pages
+  provider: releases
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
   keep_history: true
