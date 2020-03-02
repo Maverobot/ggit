@@ -14,7 +14,15 @@ import (
 )
 
 func main() {
-	dirPath := os.Args[1]
+	var dirPath string
+	if len(os.Args) == 1 {
+		dirPath = "./"
+	} else if len(os.Args) == 2 {
+		dirPath = os.Args[1]
+	} else {
+		Info("Usage %s [path to the parent folder of git repos]", os.Args[0])
+		return
+	}
 
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
