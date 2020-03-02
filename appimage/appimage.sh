@@ -9,7 +9,9 @@
 set -e
 
 export ARCH="$(arch)"
-export VERSION="v0.0.1"
+
+# TODO: automate this VERSION variable
+export VERSION=""
 
 APP=ggit
 LOWERAPP=${APP,,}
