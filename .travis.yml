@@ -1,0 +1,23 @@
+language: go
+
+go_import_path: github.com/maverobot/ggit
+
+go:
+  - 1.10.x
+  - 1.11.x
+  - 1.12.x
+  - tip
+
+script:
+  - go build -o ggit main.go
+  - ./appimage/appimage.sh
+
+after_success:
+  - ls -lh ~/out/* # Assuming you have some files in out/ that you would like to upload
+  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - bash upload.sh ~/out/*
+
+branches:
+  except:
+    - # Do not build tags that we create when we upload to GitHub Releases
+    - /^(?i:continuous)$/
