@@ -1,4 +1,5 @@
 language: go
+os: linux
 
 go_import_path: github.com/maverobot/ggit
 
