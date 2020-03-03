@@ -10,13 +10,25 @@ Download the [AppImage][release-download] and use the program right away:
 ```sh
 wget https://github.com/Maverobot/ggit/releases/download/continuous/ggit-continuous.glibc2.4-x86_64.AppImage -O ~/.local/bin/ggit
 chmod +x ~/.local/bin/ggit
+```
 
+Usage:
+```
+Usage of ggit:
+-depth int
+  	The depth ggit should go searching. (default 2)
+-path string
+  	The path to the parent directory of git repos. (default ".")
+```
+
+Example:
+```sh
 # By default, it takes current directory path as input
 cd a_folder_with_many_repos
 ggit
 
 # Or,
-ggit path_to_folder_with_many_repos
+ggit -path path_to_folder_with_many_repos -depth 1
 ```
 
 
