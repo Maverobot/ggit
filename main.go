@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/jedib0t/go-pretty/table"
@@ -25,30 +23,40 @@ func main() {
 		return
 	}
 
-	files, err := ioutil.ReadDir(dirPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	var rows []table.Row
 
-	for _, f := range files {
-		if f.IsDir() {
-			absPath := path.Join(dirPath, f.Name())
-			branch, tag, err1 := GetCurrentBranchAndTagFromPath(absPath)
-			remoteNames, err2 := GetRemotesFromPath(absPath)
-			head, err3 := GetCurrentCommitFromPath(absPath)
-			latest_tag, err4 := GetLatestTagFromPath(absPath)
-			if err1 == nil && err2 == nil && err3 == nil && err4 == nil {
-				if len(remoteNames) == 0 {
-					rows = append(rows, table.Row{f.Name(), head[:7], branch, tag, latest_tag, ""})
-					continue
-				} else {
-					rows = append(rows, table.Row{f.Name(), head[:7], branch, tag, latest_tag, strings.Join(remoteNames, "\n")})
+	err := filepath.Walk(dirPath,
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			// Skips .git folder
+			if info.IsDir() && info.Name() == ".git" {
+				return filepath.SkipDir
+			}
+
+			var level int
+			level, err = GetChildLevel(dirPath, path)
+			if err != nil {
+				panic(err)
+			}
+
+			if info.IsDir() && level <= 2 {
+				branch, tag, err1 := GetCurrentBranchAndTagFromPath(path)
+				remoteNames, err2 := GetRemotesFromPath(path)
+				head, err3 := GetCurrentCommitFromPath(path)
+				latest_tag, err4 := GetLatestTagFromPath(path)
+				if err1 == nil && err2 == nil && err3 == nil && err4 == nil {
+					if len(remoteNames) == 0 {
+						rows = append(rows, table.Row{path, head[:7], branch, tag, latest_tag, ""})
+					} else {
+						rows = append(rows, table.Row{path, head[:7], branch, tag, latest_tag, strings.Join(remoteNames, "\n")})
+					}
 				}
 			}
-		}
-	}
+			return nil
+		})
+	CheckIfError(err)
 
 	// Print the branch names, tags and remotes in a table
 	t := table.NewWriter()
@@ -70,6 +78,24 @@ func CheckIfError(err error) {
 
 	fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
 	os.Exit(1)
+}
+
+func CountLevel(s []byte) int {
+	count := int(0)
+	for i := 0; i < len(s); i++ {
+		if s[i] == '/' {
+			count++
+		}
+	}
+	return count
+}
+
+func GetChildLevel(basepath, targpath string) (int, error) {
+	rel, err := filepath.Rel(basepath, targpath)
+	if err != nil {
+		return 0, err
+	}
+	return CountLevel([]byte(rel)) + 1, nil
 }
 
 func GetRemotesFromPath(path string) ([]string, error) {
