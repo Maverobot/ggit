@@ -8,10 +8,20 @@
 
 set -e
 
+# Returns tag of HEAD or continueous
+function get_version() {
+	tag=$(git tag -l --points-at HEAD)
+	if [ -z "$tag" ]; then
+		echo "continuous"
+	else
+		echo "$tag"
+	fi
+}
+
 export ARCH="$(arch)"
 
 # TODO: automate this VERSION variable
-export VERSION=""
+export VERSION=$(get_version)
 
 APP=ggit
 LOWERAPP=${APP,,}
