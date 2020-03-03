@@ -39,7 +39,7 @@ func main() {
 			head, err3 := GetCurrentCommitFromPath(absPath)
 			if err1 == nil && err2 == nil && err3 == nil {
 				if len(remoteNames) == 0 {
-					rows = append(rows, table.Row{f.Name(), head[:7], branch, tag})
+					rows = append(rows, table.Row{f.Name(), head[:7], branch, tag, ""})
 					continue
 				} else {
 					rows = append(rows, table.Row{f.Name(), head[:7], branch, tag, remoteNames[0]})
@@ -48,7 +48,7 @@ func main() {
 					if i == 0 {
 						continue
 					}
-					rows = append(rows, table.Row{"", "", "", remoteName})
+					rows = append(rows, table.Row{"", "", "", "", remoteName})
 				}
 			}
 		}
