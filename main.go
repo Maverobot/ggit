@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,16 +13,17 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
+func Init(path *string, level *int) {
+	flag.StringVar(path, "path", ".", "The path to the parent directory of git repos.")
+	flag.IntVar(level, "depth", 2, "The depth ggit should go searching.")
+}
+
 func main() {
 	var dirPath string
-	if len(os.Args) == 1 {
-		dirPath = "./"
-	} else if len(os.Args) == 2 {
-		dirPath = os.Args[1]
-	} else {
-		Info("Usage %s [path to the parent folder of git repos]", os.Args[0])
-		return
-	}
+	var depth int
+
+	Init(&dirPath, &depth)
+	flag.Parse()
 
 	var rows []table.Row
 
@@ -41,7 +43,7 @@ func main() {
 				panic(err)
 			}
 
-			if info.IsDir() && level <= 2 {
+			if info.IsDir() && level <= depth {
 				branch, tag, err1 := GetCurrentBranchAndTagFromPath(path)
 				remoteNames, err2 := GetRemotesFromPath(path)
 				head, err3 := GetCurrentCommitFromPath(path)
