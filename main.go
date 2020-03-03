@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/jedib0t/go-pretty/table"
 	git "gopkg.in/src-d/go-git.v4"
@@ -35,20 +36,15 @@ func main() {
 		if f.IsDir() {
 			absPath := path.Join(dirPath, f.Name())
 			branch, tag, err1 := GetCurrentBranchAndTagFromPath(absPath)
-			remoteNames, err2 := GetRemotes(absPath)
+			remoteNames, err2 := GetRemotesFromPath(absPath)
 			head, err3 := GetCurrentCommitFromPath(absPath)
-			if err1 == nil && err2 == nil && err3 == nil {
+			latest_tag, err4 := GetLatestTagFromPath(absPath)
+			if err1 == nil && err2 == nil && err3 == nil && err4 == nil {
 				if len(remoteNames) == 0 {
-					rows = append(rows, table.Row{f.Name(), head[:7], branch, tag, ""})
+					rows = append(rows, table.Row{f.Name(), head[:7], branch, tag, latest_tag, ""})
 					continue
 				} else {
-					rows = append(rows, table.Row{f.Name(), head[:7], branch, tag, remoteNames[0]})
-				}
-				for i, remoteName := range remoteNames {
-					if i == 0 {
-						continue
-					}
-					rows = append(rows, table.Row{"", "", "", "", remoteName})
+					rows = append(rows, table.Row{f.Name(), head[:7], branch, tag, latest_tag, strings.Join(remoteNames, "\n")})
 				}
 			}
 		}
@@ -57,8 +53,9 @@ func main() {
 	// Print the branch names, tags and remotes in a table
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"Repository", "Head", "Branch", "Tag", "Remotes"})
+	t.AppendHeader(table.Row{"Repository", "Head", "Branch", "Tag", "Latest Tag", "Remotes"})
 	t.AppendRows(rows)
+	t.SetStyle(table.StyleColoredDark)
 	t.Render()
 }
 
@@ -75,7 +72,7 @@ func CheckIfError(err error) {
 	os.Exit(1)
 }
 
-func GetRemotes(path string) ([]string, error) {
+func GetRemotesFromPath(path string) ([]string, error) {
 	r, err := git.PlainOpen(path)
 	if err != nil {
 		return nil, err
@@ -148,6 +145,14 @@ func GetCurrentCommit(repository *git.Repository) (string, error) {
 	return headSha, nil
 }
 
+func GetLatestTagFromPath(path string) (string, error) {
+	r, err := git.PlainOpen(path)
+	if err != nil {
+		return "", err
+	}
+	return GetLatestTagFromRepository(r)
+}
+
 func GetLatestTagFromRepository(repository *git.Repository) (string, error) {
 	tagRefs, err := repository.Tags()
 	if err != nil {
@@ -170,12 +175,12 @@ func GetLatestTagFromRepository(repository *git.Repository) (string, error) {
 
 		if latestTagCommit == nil {
 			latestTagCommit = commit
-			latestTagName = tagRef.Name().String()
+			latestTagName = tagRef.Name().Short()
 		}
 
 		if commit.Committer.When.After(latestTagCommit.Committer.When) {
 			latestTagCommit = commit
-			latestTagName = tagRef.Name().String()
+			latestTagName = tagRef.Name().Short()
 		}
 
 		return nil
