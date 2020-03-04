@@ -12,7 +12,7 @@ wget https://github.com/Maverobot/ggit/releases/download/continuous/ggit-continu
 chmod +x ~/.local/bin/ggit
 ```
 
-Usage:
+## Usage
 ```
 Usage of ggit:
 -depth int
