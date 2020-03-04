@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/jedib0t/go-pretty/table"
@@ -34,8 +36,8 @@ func main() {
 			if err != nil {
 				return err
 			}
-			// Skips .git folder
-			if info.IsDir() && info.Name() == ".git" {
+			// Skips files, hidden folders and not permitted access
+			if !info.IsDir() || IsHidden(info.Name()) || CanRead(&info) {
 				return filepath.SkipDir
 			}
 
@@ -90,6 +92,26 @@ func CheckIfError(err error) {
 
 	fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
 	os.Exit(1)
+}
+
+func IsHidden(filename string) bool {
+
+	if runtime.GOOS == "windows" {
+		panic(errors.New("Windows is not supported"))
+	}
+	if filename[0:1] == "." {
+		return true
+	} else {
+		return false
+	}
+}
+
+func CanRead(info *os.FileInfo) bool {
+	m := (*info).Mode()
+	if m&(1<<2) != 0 {
+		return true
+	}
+	return false
 }
 
 func CountLevel(s []byte) int {
