@@ -31,6 +31,10 @@ ggit
 ggit -path path_to_folder_with_many_repos -depth 1
 ```
 
+Simple showcase:
+
+![](demo.gif)
+
 
 [travis-badge]:     https://travis-ci.com/Maverobot/ggit.svg?branch=master
 [travis-link]:      https://travis-ci.com/Maverobot/ggit
