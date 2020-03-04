@@ -13,16 +13,18 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
-func Init(path *string, level *int) {
+func Init(path *string, level *int, color *bool) {
 	flag.StringVar(path, "path", ".", "The path to the parent directory of git repos.")
 	flag.IntVar(level, "depth", 2, "The depth ggit should go searching.")
+	flag.BoolVar(color, "color", true, "Whether the table should be rendered with color.")
 }
 
 func main() {
 	var dirPath string
 	var depth int
+	var color bool
 
-	Init(&dirPath, &depth)
+	Init(&dirPath, &depth, &color)
 	flag.Parse()
 
 	var rows []table.Row
@@ -65,7 +67,11 @@ func main() {
 	t.SetOutputMirror(os.Stdout)
 	t.AppendHeader(table.Row{"Repository", "Head", "Branch", "Tag", "Latest Tag", "Remotes"})
 	t.AppendRows(rows)
-	t.SetStyle(table.StyleColoredDark)
+	if color {
+		t.SetStyle(table.StyleColoredDark)
+	} else {
+		t.SetStyle(table.StyleDefault)
+	}
 	t.Render()
 }
 
