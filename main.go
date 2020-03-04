@@ -62,6 +62,10 @@ func main() {
 		})
 	CheckIfError(err)
 
+	if len(rows) == 0 {
+		return
+	}
+
 	// Print the branch names, tags and remotes in a table
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
