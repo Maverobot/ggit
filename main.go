@@ -108,10 +108,18 @@ func GetRemotesFromPath(path string) ([]string, error) {
 	remotes, err := r.Remotes()
 	remoteNames := make([]string, len(remotes))
 	for i, remote := range remotes {
-		remoteNames[i] = remote.String()
-		// Info(remote.String())
+
+		remoteNames[i] = RemoteName(remote)
 	}
 	return remoteNames, nil
+}
+
+func RemoteName(r *git.Remote) string {
+	var url string
+	if len(r.Config().URLs) > 0 {
+		url = r.Config().URLs[0]
+	}
+	return fmt.Sprintf("%s\t%s", r.Config().Name, url)
 }
 
 func GetCurrentBranchAndTagFromPath(path string) (string, string, error) {
