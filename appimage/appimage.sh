@@ -19,8 +19,7 @@ function get_version() {
 }
 
 export ARCH="$(arch)"
-
-# TODO: automate this VERSION variable
+export NO_GLIBC_VERSION="1"
 export VERSION=$(get_version)
 
 APP=ggit
