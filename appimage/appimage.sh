@@ -25,11 +25,11 @@ export VERSION=$(get_version)
 APP=ggit
 LOWERAPP=${APP,,}
 
-mkdir -p "$HOME/$APP/$APP.AppDir/usr/"
+mkdir -p "/tmp/$APP/$APP.AppDir/usr/"
 
 BUILD_PATH="$(pwd)"
 
-cd "$HOME/$APP/"
+cd "/tmp/$APP/"
 
 wget -q https://github.com/probonopd/AppImages/raw/master/functions.sh -O ./functions.sh
 . ./functions.sh
