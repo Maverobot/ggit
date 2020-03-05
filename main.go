@@ -9,25 +9,65 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/blang/semver"
 	"github.com/jedib0t/go-pretty/table"
+	"github.com/rhysd/go-github-selfupdate/selfupdate"
 	git "gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
-func Init(path *string, level *int, color *bool) {
+func Init(path *string, level *int, color *bool, update *bool) {
 	flag.StringVar(path, "path", ".", "The path to the parent directory of git repos.")
 	flag.IntVar(level, "depth", 2, "The depth ggit should go searching.")
 	flag.BoolVar(color, "color", true, "Whether the table should be rendered with color.")
+	flag.BoolVar(update, "update", false, "Try go-github-selfupdate via GitHub")
+}
+
+const version = "0.0.4"
+
+func selfUpdate(slug string) error {
+	selfupdate.EnableLog()
+
+	previous := semver.MustParse(version)
+	latest, err := selfupdate.UpdateSelf(previous, slug)
+	if err != nil {
+		return err
+	}
+
+	if previous.Equals(latest.Version) {
+		fmt.Println("Current binary is the latest version", version)
+	} else {
+		fmt.Println("Update successfully done to version", latest.Version)
+		fmt.Println("Release note:\n", latest.ReleaseNotes)
+	}
+	return nil
+}
+
+func usage() {
+	fmt.Fprintln(os.Stderr, "Usage: ggit [flags]")
+	flag.PrintDefaults()
 }
 
 func main() {
 	var dirPath string
 	var depth int
 	var color bool
+	var update bool
 
-	Init(&dirPath, &depth, &color)
+	Init(&dirPath, &depth, &color, &update)
+	flag.Usage = usage
 	flag.Parse()
+
+	const slug = "maverobot/ggit"
+
+	if update {
+		if err := selfUpdate(slug); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
 
 	var rows []table.Row
 
