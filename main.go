@@ -42,10 +42,10 @@ func selfUpdate(slug string) error {
 	}
 
 	if previous.Equals(latest.Version) {
-		fmt.Println("Current binary is the latest version", version)
+		Info("\nCurrent binary is the latest version %s", version)
 	} else {
-		fmt.Println("Update successfully done to version", latest.Version)
-		fmt.Println("Release note:\n", latest.ReleaseNotes)
+		Info("\nSuccessfully updated from version %s to version %s\n", version, latest.Version)
+		Info("Release note:\n%s", latest.ReleaseNotes)
 	}
 	return nil
 }
