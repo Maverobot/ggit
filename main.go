@@ -10,9 +10,9 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/Maverobot/go-github-selfupdate/selfupdate"
 	"github.com/blang/semver"
 	"github.com/jedib0t/go-pretty/table"
-	"github.com/rhysd/go-github-selfupdate/selfupdate"
 	git "gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
