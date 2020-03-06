@@ -24,7 +24,7 @@ func Init(path *string, level *int, color *bool, update *bool) {
 	flag.BoolVar(update, "update", false, "Try go-github-selfupdate via GitHub")
 }
 
-const version = "0.0.4"
+const version = "0.0.5"
 
 func selfUpdate(slug string) error {
 	selfupdate.EnableLog()
@@ -77,7 +77,7 @@ func main() {
 				return err
 			}
 			// Skips files, hidden folders and not permitted access
-			if !info.IsDir() || IsHidden(info.Name()) || CanRead(&info) {
+			if !info.IsDir() || IsHidden(info.Name()) || !CanRead(&info) {
 				return filepath.SkipDir
 			}
 
