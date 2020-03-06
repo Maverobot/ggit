@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -18,7 +19,12 @@ import (
 )
 
 func Init(path *string, level *int, color *bool, update *bool) {
-	flag.StringVar(path, "path", ".", "The path to the parent directory of git repos.")
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+
+	flag.StringVar(path, "path", dir, "The path to the parent directory of git repos.")
 	flag.IntVar(level, "depth", 2, "The depth ggit should go searching.")
 	flag.BoolVar(color, "color", true, "Whether the table should be rendered with color.")
 	flag.BoolVar(update, "update", false, "Try go-github-selfupdate via GitHub")
@@ -76,8 +82,14 @@ func main() {
 			if err != nil {
 				return err
 			}
-			// Skips files, hidden folders and not permitted access
-			if !info.IsDir() || IsHidden(info.Name()) || !CanRead(&info) {
+
+			//	Skips files and not permitted access
+			if !info.IsDir() || !CanRead(&info) {
+				return nil
+			}
+
+			// hidden folders
+			if IsHidden(info.Name()) {
 				return filepath.SkipDir
 			}
 
