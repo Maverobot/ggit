@@ -18,7 +18,7 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
-func Init(path *string, level *int, color *bool, update *bool) {
+func Init(path *string, level *int, color *bool, update *bool, show_version *bool) {
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Println(err)
@@ -28,9 +28,11 @@ func Init(path *string, level *int, color *bool, update *bool) {
 	flag.IntVar(level, "depth", 2, "The depth ggit should go searching.")
 	flag.BoolVar(color, "color", true, "Whether the table should be rendered with color.")
 	flag.BoolVar(update, "update", false, "Try go-github-selfupdate via GitHub")
+	flag.BoolVar(show_version, "version", false, "Show version")
 }
 
 const version = "0.0.5"
+const slug = "maverobot/ggit"
 
 func selfUpdate(slug string) error {
 	selfupdate.EnableLog()
@@ -60,12 +62,21 @@ func main() {
 	var depth int
 	var color bool
 	var update bool
+	var show_version bool
 
-	Init(&dirPath, &depth, &color, &update)
+	Init(&dirPath, &depth, &color, &update, &show_version)
 	flag.Usage = usage
 	flag.Parse()
 
-	const slug = "maverobot/ggit"
+	if show_version {
+		fmt.Println(version)
+		os.Exit(0)
+	}
+
+	if len(flag.Args()) != 0 {
+		usage()
+		os.Exit(0)
+	}
 
 	if update {
 		if err := selfUpdate(slug); err != nil {
