@@ -8,7 +8,7 @@ A simple program to list status of all repositories under a given directory
 Download the [AppImage][release-download] and use the program right away:
 
 ```sh
-wget https://github.com/Maverobot/ggit/releases/download/continuous/ggit-continuous.glibc2.4-x86_64.AppImage -O ~/.local/bin/ggit
+wget https://github.com/Maverobot/ggit/releases/download/continuous/ggit-linux-amd64 -O ~/.local/bin/ggit
 chmod +x ~/.local/bin/ggit
 ```
 
