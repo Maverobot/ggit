@@ -14,11 +14,17 @@ chmod +x ~/.local/bin/ggit
 
 ## Usage
 ```
-Usage of ggit:
--depth int
-  	The depth ggit should go searching. (default 2)
--path string
-  	The path to the parent directory of git repos. (default ".")
+Usage: ggit [flags]
+  -color
+    	Whether the table should be rendered with color. (default true)
+  -depth int
+    	The depth ggit should go searching. (default 2)
+  -path string
+    	The path to the parent directory of git repos. (default "./")
+  -update
+    	Try go-github-selfupdate via GitHub
+  -version
+    	Show version
 ```
 
 Example:
@@ -39,4 +45,4 @@ Simple showcase:
 [travis-badge]:     https://travis-ci.com/Maverobot/ggit.svg?branch=master
 [travis-link]:      https://travis-ci.com/Maverobot/ggit
 [license-badge]:    https://img.shields.io/badge/License-MIT-blue.svg
-[release-download]: https://github.com/Maverobot/ggit/releases/download/continuous/ggit-continuous.glibc2.4-x86_64.AppImag
+[release-download]: https://github.com/Maverobot/ggit/releases/download/continuous/ggit-linux-amd64
