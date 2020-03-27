@@ -1,5 +1,6 @@
 [![Build Status][travis-badge]][travis-link]
 [![MIT License][license-badge]](LICENSE)
+[![Codacy Badge][codacy-badge]][codacy-link]
 # ggit
 A simple program to list status of all repositories under a given directory
 
@@ -43,5 +44,7 @@ Simple showcase:
 
 [travis-badge]:     https://travis-ci.com/Maverobot/ggit.svg?branch=master
 [travis-link]:      https://travis-ci.com/Maverobot/ggit
+[codacy-badge]:     https://api.codacy.com/project/badge/Grade/840d280344b245a38ed80cecf38cf96b
+[codacy-link]:      https://www.codacy.com/manual/quzhengrobot/ggit?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Maverobot/ggit&amp;utm_campaign=Badge_Grade
 [license-badge]:    https://img.shields.io/badge/License-MIT-blue.svg
 [release-download]: https://github.com/Maverobot/ggit/releases/download/continuous/ggit-linux-amd64
