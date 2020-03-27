@@ -13,7 +13,7 @@ chmod +x ~/.local/bin/ggit
 ```
 
 ## Usage
-```
+```sh
 Usage: ggit [flags]
   -color
     	Whether the table should be rendered with color. (default true)
@@ -40,7 +40,6 @@ ggit -path path_to_folder_with_many_repos -depth 1
 Simple showcase:
 
 ![](demo.gif)
-
 
 [travis-badge]:     https://travis-ci.com/Maverobot/ggit.svg?branch=master
 [travis-link]:      https://travis-ci.com/Maverobot/ggit
