@@ -18,7 +18,7 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
-func Init(path *string, level *int, color *bool, update *bool, show_version *bool) {
+func initFlagParser(path *string, level *int, color *bool, update *bool, showVersion *bool) {
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Println(err)
@@ -28,7 +28,7 @@ func Init(path *string, level *int, color *bool, update *bool, show_version *boo
 	flag.IntVar(level, "depth", 2, "The depth ggit should go searching.")
 	flag.BoolVar(color, "color", true, "Whether the table should be rendered with color.")
 	flag.BoolVar(update, "update", false, "Try go-github-selfupdate via GitHub")
-	flag.BoolVar(show_version, "version", false, "Show version")
+	flag.BoolVar(showVersion, "version", false, "Show version")
 }
 
 const version = "0.0.5"
@@ -44,10 +44,10 @@ func selfUpdate(slug string) error {
 	}
 
 	if previous.Equals(latest.Version) {
-		Info("\nCurrent binary is the latest version %s", version)
+		info("\nCurrent binary is the latest version %s", version)
 	} else {
-		Info("\nSuccessfully updated from version %s to version %s\n", version, latest.Version)
-		Info("Release note:\n%s", latest.ReleaseNotes)
+		info("\nSuccessfully updated from version %s to version %s\n", version, latest.Version)
+		info("Release note:\n%s", latest.ReleaseNotes)
 	}
 	return nil
 }
@@ -62,13 +62,13 @@ func main() {
 	var depth int
 	var color bool
 	var update bool
-	var show_version bool
+	var showVersion bool
 
-	Init(&dirPath, &depth, &color, &update, &show_version)
+	initFlagParser(&dirPath, &depth, &color, &update, &showVersion)
 	flag.Usage = usage
 	flag.Parse()
 
-	if show_version {
+	if showVersion {
 		fmt.Println(version)
 		os.Exit(0)
 	}
@@ -95,37 +95,37 @@ func main() {
 			}
 
 			//	Skips files and not permitted access
-			if !info.IsDir() || !CanRead(&info) {
+			if !info.IsDir() || !canRead(&info) {
 				return nil
 			}
 
 			// hidden folders
-			if IsHidden(info.Name()) {
+			if isHidden(info.Name()) {
 				return filepath.SkipDir
 			}
 
 			var level int
-			level, err = GetChildLevel(dirPath, path)
+			level, err = getChildLevel(dirPath, path)
 			if err != nil {
 				panic(err)
 			}
 
 			if info.IsDir() && level <= depth {
-				branch, tag, err1 := GetCurrentBranchAndTagFromPath(path)
-				remoteNames, err2 := GetRemotesFromPath(path)
-				head, err3 := GetCurrentCommitFromPath(path)
-				latest_tag, err4 := GetLatestTagFromPath(path)
+				branch, tag, err1 := getCurrentBranchAndTagFromPath(path)
+				remoteNames, err2 := getRemotesFromPath(path)
+				head, err3 := getCurrentCommitFromPath(path)
+				latestTag, err4 := getLatestTagFromPath(path)
 				if err1 == nil && err2 == nil && err3 == nil && err4 == nil {
 					if len(remoteNames) == 0 {
-						rows = append(rows, table.Row{path, head[:7], branch, tag, latest_tag, ""})
+						rows = append(rows, table.Row{path, head[:7], branch, tag, latestTag, ""})
 					} else {
-						rows = append(rows, table.Row{path, head[:7], branch, tag, latest_tag, strings.Join(remoteNames, "\n")})
+						rows = append(rows, table.Row{path, head[:7], branch, tag, latestTag, strings.Join(remoteNames, "\n")})
 					}
 				}
 			}
 			return nil
 		})
-	CheckIfError(err)
+	checkIfError(err)
 
 	if len(rows) == 0 {
 		return
@@ -144,11 +144,11 @@ func main() {
 	t.Render()
 }
 
-func Info(format string, args ...interface{}) {
+func info(format string, args ...interface{}) {
 	fmt.Printf("\x1b[34;1m%s\x1b[0m\n", fmt.Sprintf(format, args...))
 }
 
-func CheckIfError(err error) {
+func checkIfError(err error) {
 	if err == nil {
 		return
 	}
@@ -157,19 +157,18 @@ func CheckIfError(err error) {
 	os.Exit(1)
 }
 
-func IsHidden(filename string) bool {
+func isHidden(filename string) bool {
 
 	if runtime.GOOS == "windows" {
 		panic(errors.New("Windows is not supported"))
 	}
 	if filename[0:1] == "." {
 		return true
-	} else {
-		return false
 	}
+	return false
 }
 
-func CanRead(info *os.FileInfo) bool {
+func canRead(info *os.FileInfo) bool {
 	m := (*info).Mode()
 	if m&(1<<2) != 0 {
 		return true
@@ -177,7 +176,7 @@ func CanRead(info *os.FileInfo) bool {
 	return false
 }
 
-func CountLevel(s []byte) int {
+func countLevel(s []byte) int {
 	count := int(0)
 	for i := 0; i < len(s); i++ {
 		if s[i] == '/' {
@@ -187,15 +186,15 @@ func CountLevel(s []byte) int {
 	return count
 }
 
-func GetChildLevel(basepath, targpath string) (int, error) {
+func getChildLevel(basepath, targpath string) (int, error) {
 	rel, err := filepath.Rel(basepath, targpath)
 	if err != nil {
 		return 0, err
 	}
-	return CountLevel([]byte(rel)) + 1, nil
+	return countLevel([]byte(rel)) + 1, nil
 }
 
-func GetRemotesFromPath(path string) ([]string, error) {
+func getRemotesFromPath(path string) ([]string, error) {
 	r, err := git.PlainOpen(path)
 	if err != nil {
 		return nil, err
@@ -204,12 +203,12 @@ func GetRemotesFromPath(path string) ([]string, error) {
 	remoteNames := make([]string, len(remotes))
 	for i, remote := range remotes {
 
-		remoteNames[i] = RemoteName(remote)
+		remoteNames[i] = getRemoteName(remote)
 	}
 	return remoteNames, nil
 }
 
-func RemoteName(r *git.Remote) string {
+func getRemoteName(r *git.Remote) string {
 	var url string
 	if len(r.Config().URLs) > 0 {
 		url = r.Config().URLs[0]
@@ -217,15 +216,15 @@ func RemoteName(r *git.Remote) string {
 	return fmt.Sprintf("%s\t%s", r.Config().Name, url)
 }
 
-func GetCurrentBranchAndTagFromPath(path string) (string, string, error) {
+func getCurrentBranchAndTagFromPath(path string) (string, string, error) {
 	r, err := git.PlainOpen(path)
 	if err != nil {
 		return "", "", err
 	}
-	return GetCurrentBranchAndTag(r)
+	return getCurrentBranchAndTag(r)
 }
 
-func GetCurrentBranchAndTag(repository *git.Repository) (string, string, error) {
+func getCurrentBranchAndTag(repository *git.Repository) (string, string, error) {
 	branchRefs, err := repository.Branches()
 	if err != nil {
 		return "", "", err
@@ -258,15 +257,15 @@ func GetCurrentBranchAndTag(repository *git.Repository) (string, string, error) 
 	return currentBranchName, currentTagName, nil
 }
 
-func GetCurrentCommitFromPath(path string) (string, error) {
+func getCurrentCommitFromPath(path string) (string, error) {
 	r, err := git.PlainOpen(path)
 	if err != nil {
 		return "", err
 	}
-	return GetCurrentCommit(r)
+	return getCurrentCommit(r)
 }
 
-func GetCurrentCommit(repository *git.Repository) (string, error) {
+func getCurrentCommit(repository *git.Repository) (string, error) {
 	headRef, err := repository.Head()
 	if err != nil {
 		return "", err
@@ -276,15 +275,15 @@ func GetCurrentCommit(repository *git.Repository) (string, error) {
 	return headSha, nil
 }
 
-func GetLatestTagFromPath(path string) (string, error) {
+func getLatestTagFromPath(path string) (string, error) {
 	r, err := git.PlainOpen(path)
 	if err != nil {
 		return "", err
 	}
-	return GetLatestTagFromRepository(r)
+	return getLatestTagFromRepository(r)
 }
 
-func GetLatestTagFromRepository(repository *git.Repository) (string, error) {
+func getLatestTagFromRepository(repository *git.Repository) (string, error) {
 	tagRefs, err := repository.Tags()
 	if err != nil {
 		return "", err
@@ -319,6 +318,5 @@ func GetLatestTagFromRepository(repository *git.Repository) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return latestTagName, nil
 }
