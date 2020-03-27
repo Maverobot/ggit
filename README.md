@@ -1,6 +1,9 @@
 [![Build Status][travis-badge]][travis-link]
 [![MIT License][license-badge]](LICENSE)
 # ggit
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/40d1984f4f5e4700b0fc5020c808d76c)](https://app.codacy.com/manual/quzhengrobot/ggit?utm_source=github.com&utm_medium=referral&utm_content=Maverobot/ggit&utm_campaign=Badge_Grade_Dashboard)
+
 A simple program to list status of all repositories under a given directory
 
 ## Getting Started
