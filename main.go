@@ -31,7 +31,7 @@ func initFlagParser(path *string, level *int, color *bool, update *bool, showVer
 	flag.BoolVar(showVersion, "version", false, "Show version")
 }
 
-const version = "0.0.5"
+const version = "0.1"
 const slug = "maverobot/ggit"
 
 func selfUpdate(slug string) error {
