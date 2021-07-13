@@ -115,11 +115,12 @@ func main() {
 				remoteNames, err2 := getRemotesFromPath(path)
 				head, err3 := getCurrentCommitFromPath(path)
 				latestTag, err4 := getLatestTagFromPath(path)
-				if err1 == nil && err2 == nil && err3 == nil && err4 == nil {
+				relPath, err5 := filepath.Rel(dirPath, path)
+				if err1 == nil && err2 == nil && err3 == nil && err4 == nil && err5 == nil {
 					if len(remoteNames) == 0 {
-						rows = append(rows, table.Row{path, head[:7], branch, tag, latestTag, ""})
+						rows = append(rows, table.Row{relPath, head[:7], branch, tag, latestTag, ""})
 					} else {
-						rows = append(rows, table.Row{path, head[:7], branch, tag, latestTag, strings.Join(remoteNames, "\n")})
+						rows = append(rows, table.Row{relPath, head[:7], branch, tag, latestTag, strings.Join(remoteNames, "\n")})
 					}
 				}
 			}
