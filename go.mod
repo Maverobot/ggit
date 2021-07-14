@@ -1,4 +1,4 @@
-module github.com/Maverobot/go-github-selfupdate
+module github.com/Maverobot/ggit
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
