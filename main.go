@@ -31,7 +31,7 @@ func initFlagParser(path *string, level *int, color *bool, update *bool, showVer
 	flag.BoolVar(showVersion, "version", false, "Show version")
 }
 
-const version = "0.1"
+const version = "0.2.0"
 const slug = "maverobot/ggit"
 
 func selfUpdate(slug string) error {
@@ -121,11 +121,20 @@ func main() {
 				head, err3 := getCurrentCommit(r)
 				latestTag, err4 := getLatestTag(r)
 				relPath, err5 := filepath.Rel(dirPath, path)
-				if err1 == nil && err2 == nil && err3 == nil && err4 == nil && err5 == nil {
+				isClean, err6 := isClean(r)
+
+				var cleannessPrefix string
+				if isClean {
+					cleannessPrefix = ""
+				} else {
+					cleannessPrefix = "*"
+				}
+
+				if err1 == nil && err2 == nil && err3 == nil && err4 == nil && err5 == nil && err6 == nil {
 					if len(remoteNames) == 0 {
-						rows = append(rows, table.Row{relPath, head[:7], branch, tag, latestTag, ""})
+						rows = append(rows, table.Row{relPath, cleannessPrefix + head[:7], branch, tag, latestTag, ""})
 					} else {
-						rows = append(rows, table.Row{relPath, head[:7], branch, tag, latestTag, strings.Join(remoteNames, "\n")})
+						rows = append(rows, table.Row{relPath, cleannessPrefix + head[:7], branch, tag, latestTag, strings.Join(remoteNames, "\n")})
 					}
 				}
 			}
@@ -263,6 +272,18 @@ func getCurrentCommit(repository *git.Repository) (string, error) {
 	headSha := headRef.Hash().String()
 
 	return headSha, nil
+}
+
+func isClean(repository *git.Repository) (bool, error) {
+	w, err := repository.Worktree()
+	if err != nil {
+		return false, err
+	}
+	status, err := w.Status()
+	if err != nil {
+		return false, err
+	}
+	return status.IsClean(), err
 }
 
 func getLatestTag(repository *git.Repository) (string, error) {
