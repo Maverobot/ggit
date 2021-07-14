@@ -111,10 +111,15 @@ func main() {
 			}
 
 			if info.IsDir() && level <= depth {
-				branch, tag, err1 := getCurrentBranchAndTagFromPath(path)
-				remoteNames, err2 := getRemotesFromPath(path)
-				head, err3 := getCurrentCommitFromPath(path)
-				latestTag, err4 := getLatestTagFromPath(path)
+				r, err := git.PlainOpen(path)
+				if err != nil {
+					return nil
+				}
+
+				branch, tag, err1 := getCurrentBranchAndTag(r)
+				remoteNames, err2 := getRemotes(r)
+				head, err3 := getCurrentCommit(r)
+				latestTag, err4 := getLatestTag(r)
 				relPath, err5 := filepath.Rel(dirPath, path)
 				if err1 == nil && err2 == nil && err3 == nil && err4 == nil && err5 == nil {
 					if len(remoteNames) == 0 {
@@ -195,12 +200,12 @@ func getChildLevel(basepath, targpath string) (int, error) {
 	return countLevel([]byte(rel)) + 1, nil
 }
 
-func getRemotesFromPath(path string) ([]string, error) {
-	r, err := git.PlainOpen(path)
+func getRemotes(r *git.Repository) ([]string, error) {
+	remotes, err := r.Remotes()
 	if err != nil {
 		return nil, err
 	}
-	remotes, err := r.Remotes()
+
 	remoteNames := make([]string, len(remotes))
 	for i, remote := range remotes {
 
@@ -215,14 +220,6 @@ func getRemoteName(r *git.Remote) string {
 		url = r.Config().URLs[0]
 	}
 	return fmt.Sprintf("%s\t%s", r.Config().Name, url)
-}
-
-func getCurrentBranchAndTagFromPath(path string) (string, string, error) {
-	r, err := git.PlainOpen(path)
-	if err != nil {
-		return "", "", err
-	}
-	return getCurrentBranchAndTag(r)
 }
 
 func getCurrentBranchAndTag(repository *git.Repository) (string, string, error) {
@@ -258,14 +255,6 @@ func getCurrentBranchAndTag(repository *git.Repository) (string, string, error) 
 	return currentBranchName, currentTagName, nil
 }
 
-func getCurrentCommitFromPath(path string) (string, error) {
-	r, err := git.PlainOpen(path)
-	if err != nil {
-		return "", err
-	}
-	return getCurrentCommit(r)
-}
-
 func getCurrentCommit(repository *git.Repository) (string, error) {
 	headRef, err := repository.Head()
 	if err != nil {
@@ -276,15 +265,7 @@ func getCurrentCommit(repository *git.Repository) (string, error) {
 	return headSha, nil
 }
 
-func getLatestTagFromPath(path string) (string, error) {
-	r, err := git.PlainOpen(path)
-	if err != nil {
-		return "", err
-	}
-	return getLatestTagFromRepository(r)
-}
-
-func getLatestTagFromRepository(repository *git.Repository) (string, error) {
+func getLatestTag(repository *git.Repository) (string, error) {
 	tagRefs, err := repository.Tags()
 	if err != nil {
 		return "", err
