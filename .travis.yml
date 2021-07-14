@@ -12,10 +12,10 @@ script:
   - ./appimage/appimage.sh
 
 after_success:
-  - ls -lh /tmp/out/* # Assuming you have some files in out/ that you would like to upload
-  - mv /tmp/out/*.AppImage /tmp/out/ggit-linux-amd64 # TODO: add version number back
+  - ls -lh ./*
+  - mv ./ggit ./ggit-linux-amd64 # TODO: add version number back
   - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
-  - bash upload.sh /tmp/out/ggit-linux-amd64
+  - bash upload.sh ./ggit-linux-amd64
 
 branches:
   except:
