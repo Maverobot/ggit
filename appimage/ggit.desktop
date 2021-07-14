@@ -1,7 +1,0 @@
-[Desktop Entry]
-Name=ggit
-Comment=A command-line tool to get status of multiple repos under a given folder
-Exec=ggit
-Icon=ggit
-Type=Application
-Categories=Utility;
