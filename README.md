@@ -8,8 +8,10 @@ A simple program to list status of all repositories under a given directory
 
 Download the binary and use the program right away:
 
+As example for amd64 in Linux:
+
 ```sh
-wget https://github.com/Maverobot/ggit/releases/download/continuous/ggit-linux-amd64 -O ~/.local/bin/ggit
+wget -qc https://github.com/Maverobot/ggit/releases/download/v0.2.1/ggit_0.2.1_linux_amd64.tar.gz -O - | tar -C ~/.local/bin/ -xz ggit
 chmod +x ~/.local/bin/ggit
 ```
 
