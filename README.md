@@ -1,4 +1,4 @@
-[![Build Status][travis-badge]][travis-link]
+[![Build Status][github-actions-badge]][github-actions-link]
 [![MIT License][license-badge]](LICENSE)
 [![Codacy Badge][codacy-badge]][codacy-link]
 # ggit
@@ -44,8 +44,8 @@ Simple showcase:
 
 ![](demo.gif)
 
-[travis-badge]:     https://travis-ci.com/Maverobot/ggit.svg?branch=master
-[travis-link]:      https://travis-ci.com/Maverobot/ggit
+[github-actions-badge]: https://github.com/maverobot/ggit/actions/workflows/build.yaml/badge.svg?branch=master
+[github-actions-link]: https://github.com/Maverobot/ggit/actions
 [codacy-badge]:     https://api.codacy.com/project/badge/Grade/840d280344b245a38ed80cecf38cf96b
 [codacy-link]:      https://www.codacy.com/manual/quzhengrobot/ggit?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Maverobot/ggit&amp;utm_campaign=Badge_Grade
 [license-badge]:    https://img.shields.io/badge/License-MIT-blue.svg
