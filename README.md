@@ -11,7 +11,7 @@ Download the binary and use the program right away:
 As example for amd64 in Linux:
 
 ```sh
-wget -qc https://github.com/Maverobot/ggit/releases/download/v0.2.1/ggit_0.2.1_linux_amd64.tar.gz -O - | tar -C ~/.local/bin/ -xz ggit
+wget -qc https://github.com/Maverobot/ggit/releases/download/v0.2.3/ggit_0.2.3_linux_amd64.tar.gz -O - | tar -C ~/.local/bin/ -xz ggit
 chmod +x ~/.local/bin/ggit
 ```
 
