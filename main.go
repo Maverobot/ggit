@@ -11,11 +11,11 @@ import (
 	"strings"
 
 	"github.com/blang/semver"
-	"github.com/jedib0t/go-pretty/table"
-	"github.com/rhysd/go-github-selfupdate/selfupdate"
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/jedib0t/go-pretty/table"
+	"github.com/rhysd/go-github-selfupdate/selfupdate"
 )
 
 func initFlagParser(path *string, level *int, color *bool, update *bool, showVersion *bool) {
@@ -31,7 +31,7 @@ func initFlagParser(path *string, level *int, color *bool, update *bool, showVer
 	flag.BoolVar(showVersion, "version", false, "Show version")
 }
 
-const version = "0.2.1"
+const version = "0.2.3"
 const slug = "maverobot/ggit"
 
 func selfUpdate(slug string) error {
